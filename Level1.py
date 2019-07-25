@@ -53,6 +53,9 @@ yMove = 0
 rightmove = False
 rightfast = False
 jumping = False
+falling = False
+onSurface = False
+fallCount = 0
 jumpCount = 0
 backSpot = 0
 
@@ -62,9 +65,54 @@ class User(pygame.sprite.Sprite):
         self.image = pygame.image.load(image)
         self.x = x
         self.y = y
-        # self.hitbox(self.x + 49, self.y, 49, 65)
-    def printUser(self, x, y):
+        self.height = 65
+        self.width = 49
+        self.hitbox = (self.x, self.y, 49, 65)
+    def printUser(self, x, y, screen):
         screen.blit(self.image, (x, y))
+        self.hitbox = (x, y, 49, 65)
+        #pygame.draw.rect(screen, (255,0,0), self.hitbox, 2)
+    def collisio(self, x, y, width, height):
+        #print(x, x + width, self.hitbox[0], self.hitbox[0] + self.x )
+        #print(y, y + height, self.hitbox[1], self.hitbox[1] + self.y)
+        if self.hitbox[0] <= x <= self.hitbox[0] + self.x or self.hitbox[0] <= x + width <= self.hitbox[0] + self.x:
+            print("x hit")
+            print(self.hitbox[1], " ", self.hitbox[1] - self.height, y, y-height)
+            if self.hitbox[1] - self.height <= y <= self.hitbox[1] or self.hitbox[1] - self.height <= y + height <= self.hitbox[1]:
+                print("hit obstacle")
+                return True
+        else:
+            return False
+    def collision(self, obs : tuple):
+        #print(x, x + width, self.hitbox[0], self.hitbox[0] + self.x)
+        #print(y, y + height, self.hitbox[1], self.hitbox[1] + self.y)
+        if self.hitbox[0] <= obs[0] <= self.hitbox[0] + self.x or self.hitbox[0] <= obs[0] + obs[2] <= self.hitbox[0] + self.x:
+            #print("x:", self.hitbox[0], self.hitbox[0] + self.width, obs[0], obs[0] + obs[2])
+            #print("y:", self.hitbox[1], self.hitbox[1] + self.height, obs[1], obs[1] + obs[3])
+            if self.hitbox[1] + self.height >= obs[1] >= self.hitbox[1] or self.hitbox[1] + self.height >= obs[1] + obs[3] >= self.hitbox[1]:
+                #print("hit obstacle")
+                if self.hitbox[1] + self.height >= obs[1]  >= self.hitbox[1]:
+                    return 1
+                return 2
+
+        else:
+            return 3
+
+
+class obstacle():
+    def __init__(self, x, y, wid, h):
+        self.hitbox = (x, y, wid, h)
+        self.wid : int = wid
+        self.h : int= h
+        self.x : int= x
+        self.y : int= y
+    def upObs(self, back):
+        #screen.blit(image, (x, y))
+        self.hitbox = (self.x + back, self.y, self.wid, self.h)
+    def box(self):
+        return self.hitbox
+    def top(self):
+        return self.y
 
 def print_Back(x, height):
     screen.fill(backColor)
@@ -76,9 +124,9 @@ def print_Back(x, height):
         if i == 29 or i == 38 or i == 46 or i == 57:
             screen.blit(pipe,(54 * i + x, height - 2 * 54 - 189))
         if i == 16 or i == 20 or i == 22:
-            screen.blit(mystery,(54 * i + x, height - 2 * 54 - 300))
+            screen.blit(mystery,(54 * i + x, height - 2 * 54 - 150))
         if i == 19 or i == 21 or i == 23:
-            screen.blit(brick_block,(54 * i + x, height - 2 * 54 - 300))
+            screen.blit(brick_block,(54 * i + x, height - 2 * 54 - 150))
         if i == 21:
             screen.blit(mystery, (54 * i + x, height - 2 * 54 - 500))
         if i == 15 or i == 33:
@@ -93,6 +141,7 @@ def print_Back(x, height):
 
 marioImg = "Images/mario.png"
 mario = User(x, y, marioImg)
+platform = obstacle(54 * 19 + x, height - 2 * 54 - 150, 54 * 6, 54)
 
 while not crashed:
     pygame.time.delay(10)
@@ -120,24 +169,46 @@ while not crashed:
             if not jumping:
                 if (usrKey[pygame.K_k] and usrKey[pygame.K_a]) or (usrKey[pygame.K_k] and usrKey[pygame.K_s]) or usrKey[pygame.K_k]:
                     jumping = True
-                    jumpCount = 10
+                    jumpCount = 7
             else:
                 if jumpCount >= 0:
                     y -= jumpCount ** 2
                     jumpCount-= 1
-                elif jumpCount >= -10:
+                elif jumpCount >= -7:
                     y += jumpCount ** 2
                     jumpCount -= 1
-                elif jumpCount == -11:
+                elif jumpCount == -8:
                     jumping = False
+            if falling:
+                if fallCount >= -7:
+                    y += fallCount ** 2
+                    fallCount -= 1
+                elif fallCount == -9:
+                    falling = False
+                    onSurface = False
+                    y = height - 2 * 54 - 65
+
 
         if rightmove:
             backSpot -= speed
         if rightfast:
             backSpot -= speed * 2
 
+
         print_Back(backSpot, height)
-        User.printUser(mario, x, y)
+        platform.upObs(backSpot)
+        #User.printUser(mario, x, y, screen)
+        if User.collision(mario, platform.box()) == 1:
+            y = platform.top() - marHeight
+            jumping = False
+            #crashed = True
+            print("HIT")
+            onSurface = True
+        elif User.collision(mario, platform.box()) == 3 and onSurface:
+            falling = True
+            #fallCount = 0
+
+        User.printUser(mario, x, y, screen)
         rightmove = False
         rightfast = False
 
@@ -145,6 +216,7 @@ while not crashed:
 
     pygame.display.update()
     clock.tick(60)
+
 
 pygame.quit()
 quit()
