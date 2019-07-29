@@ -5,6 +5,8 @@
 ######################################################
 
 import pygame
+import importlib
+import sys
 
 pygame.init()
 
@@ -20,7 +22,10 @@ pygame.mixer.music.play(-1)
 
 
 def build_menu():
-    screen.fill((102, 178, 255))
+    # screen.fill((102, 178, 255))
+    bg = pygame.image.load("Images/Background.jpg").convert()
+
+    screen.blit(bg, (0, 0))
 
     logo = pygame.image.load("Images/Logo.png")
     bottom_brick = pygame.image.load("Images/Ground Block.png")
@@ -40,7 +45,7 @@ def build_menu():
     text8 = font.render('START GAME', False, (251, 251, 251))
 
     screen.blit(logo, (225, 100))
-    screen.blit(hill, (30, height - 235))
+    screen.blit(hill, (30, height - 280))
     screen.blit(bush, (700, height - 322))
     screen.blit(avatar, (5.25*54, height - 3*54 - 11))
     screen.blit(text1, (150, 30))
@@ -60,9 +65,6 @@ def build_menu():
 
     pygame.display.flip()
 
-# def gameplay():
-    # SPOT FOR MAIN GAME PLAY
-
 
 # MAIN GAME LOOP
 if __name__ == "__main__":
@@ -77,9 +79,15 @@ if __name__ == "__main__":
                 if event.key == pygame.K_ESCAPE:
                     game_running = False
                 elif event.key == pygame.K_RETURN:
-                    # gameplay()
-                    print("YOU HIT ENTER")
+                    if 'menuSelection' in sys.modules:
+                        importlib.reload(sys.modules['menuSelection'])
+                    else:
+                        __import__('menuSelection')
+
+                    if 'Level3' in sys.modules:
+                        importlib.reload(sys.modules['Level3'])
+                    else:
+                        __import__('Level3')
 
     pygame.quit()
-
 
