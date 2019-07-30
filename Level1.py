@@ -22,7 +22,7 @@ clock = pygame.time.Clock()
 
 
 crashed = False
-coinImg = pygame.image.load("Images/Coin.jpg")
+coinImg = pygame.image.load("Images/Coin.png")
 pyImg = pygame.image.load("Images/mario.png")
 bottom_brick = pygame.image.load("Images/Ground Block.png")
 brick_block = pygame.image.load("Images/Brick Block.png")
@@ -33,6 +33,7 @@ clouds = pygame.image.load("Images/Clouds.png")
 mystery = pygame.image.load("Images/Mystery Block.png")
 flag = pygame.image.load("Images/Flagpole.png")
 castle = pygame.image.load("Images/Castle.png")
+goombaImg = "Images/Goomba.png"
 
 def coins(x,y):
     screen.blit(coinImg,(x,y))
@@ -61,6 +62,8 @@ onSurface = False
 fallCount = 0
 jumpCount = 0
 backSpot = 0
+direction = 1
+loopCount = 0
 
 class User(pygame.sprite.Sprite):
     height: int
@@ -76,8 +79,8 @@ class User(pygame.sprite.Sprite):
         self.bottom = self.y - 65
         self.center = self.x + 25
     def printUser(self, screen):
-        screen.blit(self.image, (mario.x, mario.y))
-        self.hitbox = (mario.x, mario.y, 49, 65)
+        screen.blit(self.image, (self.x, self.y))
+        self.hitbox = (self.x, self.y, 49, 65)
     def collision(self, obs : tuple):
         if self.hitbox[0] <= obs[0] <= self.hitbox[0] + self.x or self.hitbox[0] <= obs[0] + obs[2] <= self.hitbox[0] + self.x:
             if self.hitbox[1] + self.height >= obs[1] >= self.hitbox[1] or self.hitbox[1] + self.height >= obs[1] + obs[3] >= self.hitbox[1]:
@@ -103,6 +106,8 @@ class User(pygame.sprite.Sprite):
         self.y = y
         self.bottom = y + 65
         self.center = x + 25
+    def selfMove(self, direction, x):
+        self.x += 15 * direction + x
 
 
 
@@ -130,6 +135,8 @@ class obstacle():
         self.y: int = y
     def changeY(self, y):
         self.y = y
+    def selfMove(self, direction):
+        self.x += 15 * direction
 
 def print_Back(x, height):
     screen.fill(backColor)
@@ -206,6 +213,8 @@ mario = User(0, 700 - 54*2 - 65, marioImg)
 platform = obstacle(54 * 20 + x, height - 2 * 54 - 150, 54 * 6 , 54)
 box = obstacle(54 * 18 + x, height - 2 * 54 - 150, 54, 54)
 ground = obstacle(0, height - 54*2, 54*60, 54*2)
+goomba1 = User(54 * 38, 700 - 54 * 2 - 34, goombaImg)
+goomba2 = User(54 * 54, 700 - 54 * 2 - 34, goombaImg)
 
 while not crashed:
     pygame.time.delay(10)
@@ -298,24 +307,35 @@ while not crashed:
         if rightfast:
             backSpot -= speed * 2
 
+        print(loopCount % 5, loopCount % 5)
+        if loopCount % 5 == 0 or loopCount % 11 == 0:
+            print("change dir")
+            direction *= -1
 
         print_Back(backSpot, height)
         platform.upObs(backSpot)
-        mario.update(mario.x, mario.y)
+        #mario.update(mario.x, mario.y)
+        goomba1.update(54*38 + backSpot, 700 - 54*2 - 34)
+        goomba1.selfMove(direction, backSpot)
+        goomba2.update(54 * 54 + backSpot, 700 - 54 * 2 - 34)
+        goomba2.selfMove(direction*2, backSpot)
 
         checkPlatforms(mario, backSpot, jumping)
 
-
-
-
-    User.printUser(mario, screen)
+    #goomba1.printUser(screen)
+    mario.printUser(screen)
+    goomba1.printUser(screen)
+    goomba2.printUser(screen)
     rightmove = False
     rightfast = False
 
-
-
+    for goomba in (goomba1, goomba2):
+        if goomba.x <= mario.x <= goomba.x + 30 and mario.y == 700 - 54*2 - 65:
+            crashed = True
     pygame.display.update()
     clock.tick(60)
+
+    loopCount += 1
 
 
 pygame.quit()
