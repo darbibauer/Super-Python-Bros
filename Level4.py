@@ -48,6 +48,8 @@ fallCount = 0
 backSpot = 0
 x = 15
 y = height - 7 * 54 - marHeight
+loopCount = 0
+direction = 1
 
 block = pygame.image.load("Images/gray2.png")
 lava = pygame.image.load("Images/lava.png")
@@ -56,6 +58,7 @@ mystery = pygame.image.load("Images/Mystery Block.png")
 mushroom = pygame.image.load("Images/Mushroom.jpg")
 flag = pygame.image.load("Images/Flagpole.png")
 castle = pygame.image.load("Images/Castle.png")
+goombaImg = "Images/Goomba.png"
 
 class User(pygame.sprite.Sprite):
     height: int
@@ -71,8 +74,8 @@ class User(pygame.sprite.Sprite):
         self.bottom = self.y - 65
         self.center = self.x + 25
     def printUser(self, screen):
-        screen.blit(self.image, (mario.x, mario.y))
-        self.hitbox = (mario.x, mario.y, 49, 65)
+        screen.blit(self.image, (self.x, self.y))
+        self.hitbox = (self.x, self.y, 49, 65)
     def collision(self, obs : tuple):
         if self.hitbox[0] <= obs[0] <= self.hitbox[0] + self.x or self.hitbox[0] <= obs[0] + obs[2] <= self.hitbox[0] + self.x:
             if self.hitbox[1] + self.height >= obs[1] >= self.hitbox[1] or self.hitbox[1] + self.height >= obs[1] + obs[3] >= self.hitbox[1]:
@@ -98,6 +101,8 @@ class User(pygame.sprite.Sprite):
         self.y = y
         self.bottom = y + 65
         self.center = x + 25
+    def selfMove(self, direction, x):
+        self.x += 15 * direction + x
 
 
 class obstacle():
@@ -170,6 +175,8 @@ def checkPlatforms(mario,x, jumping):
 
 marioImg = "Images/mario.png"
 mario = User(x, y, marioImg)
+goomba1 = User(54 * 32, 700 - 54 * 4 - 34, goombaImg)
+goomba2 = User(54 * 68, 700 - 54 * 4 - 34, goombaImg)
 
 
 while not crashed:
@@ -186,7 +193,7 @@ while not crashed:
                     if mario.x < width / 2 - speed - marWidth:
                             mario.x += speed * 2
                     else:
-                            rightfast = True
+                        rightfast = True
                 elif mario.x < width / 2 - speed - marWidth:
                         mario.x += speed
 
@@ -226,16 +233,32 @@ while not crashed:
         if rightfast:
             backSpot -= speed * 2
 
+        if loopCount % 5 == 0 or loopCount % 11 == 0:
+            direction *= -1
+
         print_Back(backSpot, height)
+        goomba1.update(54 * 32 + backSpot, 700 - 54 * 4 - 34)
+        goomba1.selfMove(direction, backSpot)
+        goomba2.update(54 * 68 + backSpot, 700 - 54 * 4 - 34)
+        goomba2.selfMove(direction * 2, backSpot)
 
         checkPlatforms(mario, backSpot, jumping)
         if (mario.x == 180 or mario.x == 240 or mario.x == 300) and usrKey[pygame.K_s] and backSpot == 0:
             mario.y += 54
         elif (mario.x == 180 or mario.x == 240 or mario.x == 300) and (usrKey[pygame.K_s] and usrKey[pygame.K_k]) and backSpot == 0:
             mario.y += 54
-        User.printUser(mario,  screen)
+
+        for goomba in (goomba1, goomba2):
+            if goomba.x <= mario.x <= goomba.x + 30 and mario.y == 700 - 54 * 2 - 65:
+                crashed = True
+
+        mario.printUser(screen)
+        goomba1.printUser(screen)
+        goomba2.printUser(screen)
         rightmove = False
         rightfast = False
+
+        loopCount += 1
 
 
 
