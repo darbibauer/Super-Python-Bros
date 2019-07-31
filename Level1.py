@@ -11,9 +11,9 @@ height = 700
 
 background = (102, 178, 255)
 
-jump_noise = pygame.mixer.Sound('Sound Effects/smb_jump-small.wav')
-pygame.mixer.music.load('Sound Effects/Main Theme.mp3')
-pygame.mixer.music.play(-1)
+#jump_noise = pygame.mixer.Sound('Sound Effects/smb_jump-small.wav')
+#pygame.mixer.music.load('Sound Effects/Main Theme.mp3')
+#pygame.mixer.music.play(-1)
 
 screen = pygame.display.set_mode((width,height))
 pygame.display.set_caption("Level 1")
@@ -166,20 +166,40 @@ def print_Back(x, height):
         screen.blit(bottom_brick, (54 * i + x, height - 54))
         screen.blit(bottom_brick, (54 * i + x, height - 2 * 54))
 
-def checkPlatforms(mario,x, jumping):
-    if (54 * 19 + x) <= mario.x <= (54 * 24 + x):
-        print(700 - 54 * 2 - 150, mario.bottom, 700 - 54 * 2 - 150 - 65)
-        print("x", 54*19+x, mario.x, 54*25+x)
-        if (442 + 65) >= mario.y > (377 + 65):
+def checkPlatforms(mario,x, jumping, jumpcount):
+    if (54 * 19 + x - 50) <= mario.x <= (54 * 24 + x - 50):
+        """if (442 + 65) >= mario.y > (377 + 65) and jumping and jumpcount <= 6:
             # if hits bottom
             # FIX THIS
+            mario.y = 377 + 150
+        if (442 + 65) >= mario.y > (377 + 65):# and jumping:
+            mario.y = 377 + 30
+        elif (442) >= mario.y >= (377):# and jumping:
+            # if on top of platform
+            mario.y += 30
+        elif mario.y < 377 + 54:
+            #if below
+            mario.y = 700 - 54 * 2 - 65
+    elif (54 * 16 + x) <= mario.center <= (54 * 17 + x):
+        if (442 + 65) >= mario.y > (377 + 65):
             mario.y += 30
         elif (442) >= mario.y >= (377):
+            mario.y = 377  # 700 - 2 * 54 - 150 - 65
+        elif mario.x < 377 + 54:
+            mario.y = 700 - 54 * 2 - 65"""
+    if (54 * 19 + x) <= mario.x <= (54 * 24 + x):
+        print(700 - 54 * 2 - 150, mario.bottom, 700 - 54 * 2 - 150 - 65)
+        print("x", 54 * 19 + x, mario.x, 54 * 25 + x)
+        if (442 + 65) >= mario.y > (377 + 65) :#and jumpcount <= 6:
+            # if hits bottom
+            # FIX THIS
+            mario.y = 700 - 54 * 2 - 65
+        elif (442) >= mario.y >= (377) and jumpcount <= 4:
             # if on top of platform
             print("here", mario.x)
             mario.y = 377  # 700 - 2 * 54 - 150 - 65
         elif mario.x < 377 + 54:
-            #if below
+            # if below
             mario.y = 700 - 54 * 2 - 65
     elif (54 * 16 + x) <= mario.center <= (54 * 17 + x):
         if (442 + 65) >= mario.y > (377 + 65):
@@ -189,23 +209,25 @@ def checkPlatforms(mario,x, jumping):
             mario.y = 377  # 700 - 2 * 54 - 150 - 65
         elif mario.x < 377 + 54:
             mario.y = 700 - 54 * 2 - 65
-    elif 54 * 29 + x <= mario.x <= 54 * 29 + 114 + x and (442+ 54) >= mario.y >= (377 + 54):
-            mario.y = 377 +54
-    elif 54 * 38 + x <= mario.x <= 54 * 38 + 114 + x and (442 + 54) >= mario.y >= (377 + 54):
-            mario.y = 377 + 54
-    elif 54 * 46 + x <= mario.x <= 54 * 46 + 114 + x and (442 + 54) >= mario.y >= (377 + 54):
-            mario.y = 377 + 54
-    elif 54 * 57 + x <= mario.x <= 54 * 57 + 114 + x and (442 + 54) >= mario.y >= (377 + 54):
-            mario.y = 377 + 54
-    elif not jumping and mario.y < 700 - 54 * 2 - 65:
+    elif 54 * 29 + x <= mario.x <= 54 * 29 + 114 + x and (442+ 54) >= mario.y >= (377 + 54):# and jumping:
+            mario.y = 377
+    elif 54 * 38 + x <= mario.x <= 54 * 38 + 114 + x and (442 + 54) >= mario.y >= (377 + 54):# and jumping:
+            mario.y = 377
+    elif 54 * 46 + x <= mario.x <= 54 * 46 + 114 + x and (442 + 54) >= mario.y >= (377 + 54):# and jumping:
+            mario.y = 377
+    elif 54 * 57 + x <= mario.x <= 54 * 57 + 114 + x and (442 + 54) >= mario.y >= (377 + 54):# and jumping:
+            mario.y = 377
+    elif not jumping and mario.y < 700 - 54 * 2 - 65 - 30:
         mario.y += 30
-    elif not jumping and mario.y >= 700 - 54 * 2 - 65:
+    elif not jumping and mario.y >= 700 - 54 * 2 - 65 - 30:
         mario.y = 700 - 54 * 2 - 65
     elif not jumping:
         if mario.y == (700-54 * 2 - 65):
             mario.y = 700 - 54*2 - 65
         else:
             mario.y += 30
+    if mario.y > 700 - 54*2 - 60:
+        mario.y = 700 - 54 * 2 - 60
 
 
 marioImg = "Images/mario.png"
@@ -281,7 +303,7 @@ while not crashed:
                     jumping = True
                     jumpCount = 8
                     pygame.mixer.music.pause()
-                    jump_noise.play()
+                    #jump_noise.play()
                     pygame.mixer.music.unpause()
             else:
                 if jumpCount >= 0:
@@ -307,22 +329,18 @@ while not crashed:
         if rightfast:
             backSpot -= speed * 2
 
-        print(loopCount % 5, loopCount % 5)
         if loopCount % 5 == 0 or loopCount % 11 == 0:
-            print("change dir")
             direction *= -1
 
         print_Back(backSpot, height)
         platform.upObs(backSpot)
-        #mario.update(mario.x, mario.y)
         goomba1.update(54*38 + backSpot, 700 - 54*2 - 34)
         goomba1.selfMove(direction, backSpot)
         goomba2.update(54 * 54 + backSpot, 700 - 54 * 2 - 34)
         goomba2.selfMove(direction*2, backSpot)
 
-        checkPlatforms(mario, backSpot, jumping)
+        checkPlatforms(mario, backSpot, jumping, jumpCount)
 
-    #goomba1.printUser(screen)
     mario.printUser(screen)
     goomba1.printUser(screen)
     goomba2.printUser(screen)
