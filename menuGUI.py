@@ -65,7 +65,6 @@ def build_menu():
 
     pygame.display.flip()
 
-
 # MAIN GAME LOOP
 if __name__ == "__main__":
     game_running = True
@@ -84,10 +83,28 @@ if __name__ == "__main__":
                     else:
                         __import__('menuSelection')
 
-                    if 'Level3' in sys.modules:
-                        importlib.reload(sys.modules['Level3'])
+                    if 'Level1' in sys.modules:
+                        importlib.reload(sys.modules['Level1'])
                     else:
-                        __import__('Level3')
+                        __import__('Level1')
 
-    pygame.quit()
+                    if 'gameOver' not in sys.modules:
+                        if 'Level2Beginning' in sys.modules:
+                            importlib.reload(sys.modules['Level2Beginning'])
+                        else:
+                            __import__('Level2Beginning')
+
+                    if 'gameOver' not in sys.modules:
+                        if 'Level3' in sys.modules:
+                            importlib.reload(sys.modules['Level3'])
+                        else:
+                            __import__('Level3')
+
+                    if 'gameOver' not in sys.modules:
+                        if 'Level4' in sys.modules:
+                            importlib.reload(sys.modules['Level4'])
+                        else:
+                            __import__('Level4')
+
+                    pygame.quit()
 

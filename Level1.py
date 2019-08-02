@@ -177,9 +177,7 @@ while True:
         mario.tracker += 1
 
     elif k[K_l] and not mario.jump:
-        pygame.mixer.music.pause()
         jump_noise.play()
-        pygame.mixer.music.unpause()
         mario.jump = True
         continue
 
@@ -262,11 +260,11 @@ while True:
 
     elif mario.circlePosX >=54 * 63 + mario.stagePosX:
         pygame.mixer.music.pause()
-        if 'winScreen' in sys.modules:
-            importlib.reload(sys.modules['winScreen'])
+        if 'nextLevel' in sys.modules:
+            importlib.reload(sys.modules['nextLevel'])
 
         else:
-            __import__('winScreen')
+            __import__('nextLevel')
         pygame.mixer.music.unpause()
         break
 

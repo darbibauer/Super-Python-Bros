@@ -25,7 +25,7 @@ def build_menu():
     screen.blit(bg, (0, 0))
 
     font = pygame.font.Font('font.ttf', 26)
-    text7 = font.render('YOU WON!', False, (50, 205, 50))
+    text7 = font.render('NEXT LEVEL!', False, (50, 205, 50))
 
     screen.blit(text7, (400, 345))
 
