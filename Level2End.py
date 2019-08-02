@@ -52,7 +52,7 @@ def print_Back(x, height):
 
 
 def check_Platforms(mario):
-    if 1 * 54 <= mario.circlePosX <= 3 * 54 - 30:
+    if 1 * 54 <= mario.mario_X <= 3 * 54 - 30:
         mario.originalplayerPosY = 403
     else:
         mario.originalplayerPosY = height - (3 * 58) + 4
@@ -61,14 +61,14 @@ def check_Platforms(mario):
 class player:
     def __init__(self, height, width):
         self.stageWidth = width
-        self.stagePosX = 0
+        self.stageLocation = 0
 
-        self.startScrollingPosX = width / 2
+        self.startMoving = width / 2
 
-        self.circleRadius = 100
-        self.circlePosX = self.circleRadius
+        self.marioLength = 100
+        self.mario_X = self.marioLength
 
-        self.playerPosX = self.circleRadius
+        self.playerPosX = self.marioLength
         self.originalplayerPosY = 403
         self.newplayerPosY = 403
         self.playerVelocityX = 0
@@ -161,30 +161,30 @@ while True:
 
     mario.playerPosX += mario.playerVelocityX
 
-    if mario.playerPosX > mario.stageWidth - mario.circleRadius:
-        mario.playerPosX = mario.stageWidth - mario.circleRadius
-    elif mario.playerPosX < mario.circleRadius:
-        mario.playerPosX = mario.circleRadius
-    elif mario.playerPosX < mario.startScrollingPosX:
-        mario.circlePosX = mario.playerPosX
-    elif mario.playerPosX > mario.stageWidth - mario.startScrollingPosX:
-        mario.circlePosX = mario.playerPosX - mario.stageWidth + width
+    if mario.playerPosX > mario.stageWidth - mario.marioLength:
+        mario.playerPosX = mario.stageWidth - mario.marioLength
+    elif mario.playerPosX < mario.marioLength:
+        mario.playerPosX = mario.marioLength
+    elif mario.playerPosX < mario.startMoving:
+        mario.mario_X = mario.playerPosX
+    elif mario.playerPosX > mario.stageWidth - mario.startMoving:
+        mario.mario_X = mario.playerPosX - mario.stageWidth + width
     else:
-        mario.circlePosX = mario.startScrollingPosX
-        mario.stagePosX += -mario.playerVelocityX
+        mario.mario_X = mario.startMoving
+        mario.stageLocation += -mario.playerVelocityX
 
-    rel_x = mario.stagePosX % width
+    rel_x = mario.stageLocation % width
     screen.blit(bg, (rel_x - width, 0))
     if rel_x < width:
         screen.blit(bg, (rel_x, 0))
 
-    print_Back(mario.stagePosX, height)
-    screen.blit(avatar, (mario.circlePosX, mario.newplayerPosY))
+    print_Back(mario.stageLocation, height)
+    screen.blit(avatar, (mario.mario_X, mario.newplayerPosY))
 
     pygame.display.update()
     clock.tick(FPS)
 
-    if mario.circlePosX >= 54 * 11 - 20:
+    if mario.mario_X >= 54 * 11 - 20:
         pygame.mixer.music.pause()
         if 'nextLevel' in sys.modules:
             importlib.reload(sys.modules['nextLevel'])

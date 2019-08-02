@@ -48,13 +48,13 @@ def print_Back(x, height):
 
 
 def check_Platforms(mario):
-    if mario.stagePosX <= mario.circlePosX <= 54 * 15 + mario.stagePosX :
+    if mario.stageLocation <= mario.mario_X <= 54 * 15 + mario.stageLocation :
         if mario.newplayerPosY< height - 170:
             mario.originalplayerPosY = height - 170
-    elif 54 * 15 + mario.stagePosX <= mario.circlePosX < 54 * 16 + mario.stagePosX:
+    elif 54 * 15 + mario.stageLocation <= mario.mario_X < 54 * 16 + mario.stageLocation:
         if mario.newplayerPosY < 420:
             mario.originalplayerPosY = 420
-    elif mario.circlePosX > 54 * 16 + mario.stagePosX:
+    elif mario.mario_X > 54 * 16 + mario.stageLocation:
         if mario.newplayerPosY < 325:
             mario.originalplayerPosY = 325
 
@@ -62,14 +62,14 @@ def check_Platforms(mario):
 class player:
     def __init__(self, height, width):
         self.stageWidth = width
-        self.stagePosX = 0
+        self.stageLocation = 0
 
-        self.startScrollingPosX = width / 2
+        self.startMoving = width / 2
 
-        self.circleRadius = 50
-        self.circlePosX = self.circleRadius
+        self.marioLength = 50
+        self.mario_X = self.marioLength
 
-        self.playerPosX = self.circleRadius
+        self.playerPosX = self.marioLength
         self.originalplayerPosY = height - (3 * 58) + 4
         self.newplayerPosY = self.originalplayerPosY
         self.playerVelocityX = 0
@@ -152,19 +152,19 @@ while True:
 
     mario.playerPosX += mario.playerVelocityX
 
-    if mario.playerPosX > mario.stageWidth - mario.circleRadius:
-        mario.playerPosX = mario.stageWidth - mario.circleRadius
-    elif mario.playerPosX < mario.circleRadius:
-        mario.playerPosX = mario.circleRadius
-    elif mario.playerPosX < mario.startScrollingPosX:
-        mario.circlePosX = mario.playerPosX
-    elif mario.playerPosX > mario.stageWidth - mario.startScrollingPosX:
-        mario.circlePosX = mario.playerPosX - mario.stageWidth + width
+    if mario.playerPosX > mario.stageWidth - mario.marioLength:
+        mario.playerPosX = mario.stageWidth - mario.marioLength
+    elif mario.playerPosX < mario.marioLength:
+        mario.playerPosX = mario.marioLength
+    elif mario.playerPosX < mario.startMoving:
+        mario.mario_X = mario.playerPosX
+    elif mario.playerPosX > mario.stageWidth - mario.startMoving:
+        mario.mario_X = mario.playerPosX - mario.stageWidth + width
     else:
-        mario.circlePosX = mario.startScrollingPosX
-        mario.stagePosX += -mario.playerVelocityX
+        mario.mario_X = mario.startMoving
+        mario.stageLocation += -mario.playerVelocityX
 
-    rel_x = mario.stagePosX % width
+    rel_x = mario.stageLocation % width
     screen.blit(bg, (rel_x - width, 0))
     if rel_x < width:
         screen.blit(bg, (rel_x, 0))
@@ -172,13 +172,13 @@ while True:
     if mario.playerPosX == width:
         drawBricks()
 
-    print_Back(mario.stagePosX, height)
-    screen.blit(avatar, (mario.circlePosX, mario.newplayerPosY))
+    print_Back(mario.stageLocation, height)
+    screen.blit(avatar, (mario.mario_X, mario.newplayerPosY))
 
     pygame.display.update()
     clock.tick(FPS)
 
-    if 760 < mario.circlePosX < 780:
+    if 760 < mario.mario_X < 780:
         if 'Level2' in sys.modules:
             importlib.reload(sys.modules['Level2'])
 
