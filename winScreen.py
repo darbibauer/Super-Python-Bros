@@ -20,12 +20,10 @@ winning.play()
 
 
 def build_menu():
-    bg = pygame.image.load("Images/Background2.jpg").convert()
-
-    screen.blit(bg, (0, 0))
+    screen.fill((0,0,0))
 
     font = pygame.font.Font('font.ttf', 26)
-    text7 = font.render('YOU WON!', False, (50, 205, 50))
+    text7 = font.render('YOU WON!', False, (255, 255, 255))
 
     screen.blit(text7, (400, 345))
 
