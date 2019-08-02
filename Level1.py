@@ -260,7 +260,7 @@ while True:
         pygame.mixer.music.unpause()
         break
 
-    elif mario.circlePosX >= 54 * 152.5 + mario.stagePosX:
+    elif mario.circlePosX >=54 * 63 + mario.stagePosX:
         pygame.mixer.music.pause()
         if 'winScreen' in sys.modules:
             importlib.reload(sys.modules['winScreen'])

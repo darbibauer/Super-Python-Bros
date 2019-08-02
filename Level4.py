@@ -45,7 +45,7 @@ castle = pygame.image.load("Images/Castle.png")
 goombaImg = "Images/Goomba.png"
 
 
-backColor = l(0,0,0)
+backColor = (0,0,0)
 
 clock = pygame.time.Clock()
 pygame.display.set_caption("Super Python Bros.")
@@ -261,7 +261,7 @@ while True:
         pygame.mixer.music.unpause()
         break
 
-    elif mario.circlePosX >= 54 * 152.5 + mario.stagePosX:
+    elif mario.circlePosX >= 54 * 53 + mario.stagePosX:
         pygame.mixer.music.pause()
         if 'winScreen' in sys.modules:
             importlib.reload(sys.modules['winScreen'])
