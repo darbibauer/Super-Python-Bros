@@ -1,55 +1,39 @@
-# Super Python Bros Level Four
+######################################################
+#   Darbi Bauer (dkb17) & Sarah Rosenfeld (smr15)    #
+#   Group Project (level 4.py)                       #
+#   CIS 4930                                         #
+######################################################
 
 import pygame
+from pygame.locals import *
+import importlib
+import sys
 
-pygame.init()
+lose = False
+avatar = pygame.image.load("Images/Mario.png")
+first_castle = pygame.image.load("Images/First Castle.png")
+castle = pygame.image.load("Images/Castle.png")
+bottom_brick = pygame.image.load("Images/Ground Block.png")
+coin = pygame.image.load("Images/Coin.jpg")
+bottom_brick = pygame.image.load("Images/Ground Block.png")
+brick_block = pygame.image.load("Images/Brick Block.png")
+bush = pygame.image.load("Images/Bush.png")
+hill = pygame.image.load("Images/Hill.png")
+pipe = pygame.image.load("Images/pipe.png")
+little_cloud = pygame.image.load("Images/Little Cloud.png")
+clouds = pygame.image.load("Images/Big Cloud.png")
+mystery = pygame.image.load("Images/Mystery Block.png")
+jump_block = pygame.image.load("Images/Jump Block.png")
+finish_block = pygame.image.load("Images/Finish Block.png")
+flag = pygame.image.load("Images/Flagpole.png")
+mystery_block = pygame.image.load("Images/Mystery Block.png")
 
-white= (255,255,255)
-backColor = (0,0,0)
-width= 1000
-height = 700
-
-background = (0, 0, 0)
-
-
-jump_noise = pygame.mixer.Sound('Sound Effects/smb_jump-small.wav')
-pygame.mixer.music.load('Sound Effects/Main Theme.mp3')
-pygame.mixer.music.play(-1)
-
-screen = pygame.display.set_mode((width,height))
-pygame.display.set_caption("Level 4")
-
-clock = pygame.time.Clock()
-
-"""def coins(x,y):
-    screen.blit(coinImg,(x,y))
-
-def pyMove(x,y):
-    screen.blit(pyImg,(x,y))"""
-
-
-screen.fill(backColor)
-
-# BUILDING BRICKS
-
-pygame.key.set_repeat(10,10)
-speed = 15
-marWidth = 49
-marHeight = 65
-xMove = 0
-yMove = 0
-rightmove = False
-rightfast = False
-jumping = False
-crashed = False
-jumpCount = 0
-falling = False
-fallCount = 0
-backSpot = 0
-x = 15
-y = height - 7 * 54 - marHeight
-loopCount = 0
-direction = 1
+grass3 = pygame.image.load("Images/Grass/Grass3.png")
+grass4 = pygame.image.load("Images/Grass/Grass4.png")
+grass5 = pygame.image.load("Images/Grass/Grass5.png")
+grass6 = pygame.image.load("Images/Grass/Grass6.png")
+grass7 = pygame.image.load("Images/Grass/Grass7.png")
+grass8 = pygame.image.load("Images/Grass/Grass8.png")
 
 block = pygame.image.load("Images/gray2.png")
 lava = pygame.image.load("Images/lava.png")
@@ -60,91 +44,37 @@ flag = pygame.image.load("Images/Flagpole.png")
 castle = pygame.image.load("Images/Castle.png")
 goombaImg = "Images/Goomba.png"
 
-class User(pygame.sprite.Sprite):
-    height: int
 
-    def __init__(self, x, y, image):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load(image)
-        self.x: int = x
-        self.y: int = y
-        self.height = 65
-        self.width = 49
-        self.hitbox = (self.x, self.y, 49, 65)
-        self.bottom = self.y - 65
-        self.center = self.x + 25
-    def printUser(self, screen):
-        screen.blit(self.image, (self.x, self.y))
-        self.hitbox = (self.x, self.y, 49, 65)
-    def collision(self, obs : tuple):
-        if self.hitbox[0] <= obs[0] <= self.hitbox[0] + self.x or self.hitbox[0] <= obs[0] + obs[2] <= self.hitbox[0] + self.x:
-            if self.hitbox[1] + self.height >= obs[1] >= self.hitbox[1] or self.hitbox[1] + self.height >= obs[1] + obs[3] >= self.hitbox[1]:
-                # check if it is on top
-                if self.hitbox[1] + self.height >= obs[1] >= self.hitbox[1]:
-                    return 1
-                return 2
+backColor = l(0,0,0)
 
-        else:
-            return 3
-    def top(self):
-        return self.y
-    def bottom(self):
-        return self.y + self.height
-    def left(self):
-        return self.x
-    def right(self):
-        return self.x + self.width
-    def center(self):
-        return self.x + 25
-    def update(self, x : int,y : int ):
-        self.x = x
-        self.y = y
-        self.bottom = y + 65
-        self.center = x + 25
-    def selfMove(self, direction, x):
-        self.x += 15 * direction + x
+clock = pygame.time.Clock()
+pygame.display.set_caption("Super Python Bros.")
 
 
-class obstacle():
-    def __init__(self, x, y, wid, h):
-        self.hitbox = (x, y, wid, h)
-        self.wid : int = wid
-        self.h : int= h
-        self.x : int= x
-        self.y : int= y
-    def upObs(self, back):
-        self.hitbox = (self.x + back, self.y, self.wid, self.h)
-    def box(self):
-        return self.hitbox
-    def top(self):
-        return self.y
-    def bottom(self):
-        return self.y + self.h
-    def left(self):
-        return self.x
-    def right(self):
-        return self.x + self.wid
-    def updaate(self, x, y):
-        self.x: int = x
-        self.y: int = y
-    def changeY(self, y):
-        self.y = y
+def drawBricks():
+    for i in range(0, 16):
+        screen.blit(bottom_brick, (54*i, height - 54))
+        screen.blit(bottom_brick, (54*i, height - 2*54))
+
+    pygame.display.flip()
+
 
 def print_Back(x, height):
     screen.fill(backColor)
-    for i in range(0, 59):
+    for i in range(0, 65):
         if i != 14 and i != 13 and i != 24 and i != 25 and i != 26 and i != 30 and i != 31 and i != 32:
             screen.blit(block, (54 * i + x, height - 54))
             screen.blit(block, (54 * i + x, height - 2 * 54))
             screen.blit(block, (54 * i + x, height - 3 * 54))
             screen.blit(block, (54 * i + x, height - 4 * 54))
-        if i < 22 or  34 < i < 50:
-            screen.blit(block, (54 * i + x, height - 10 * 54))
+            screen.blit(block, (54 * i + x, height - 5 * 54))
+        if i < 22 or 34 < i < 50:
+            #screen.blit(block, (54 * i + x, height - 10 * 54))
             screen.blit(block, (54 * i + x, height - 11 * 54))
-        if i == 21 or i == 35:
-            screen.blit(red, (54 * i + x, height - 8 * 54))
-        if i == 21 or 34 < i < 50:
-            screen.blit(block, (54 * i + x, height - 9 * 54))
+        # if i == 21 or i == 35:
+        #     #screen.blit(red, (54 * i + x, height - 8 * 54))
+        # if i == 21 or 34 < i < 50:
+        #     #screen.blit(block, (54 * i + x, height - 9 * 54))
         screen.blit(block, (54 * i + x, height - 12 * 54))
         if i == 14 or i == 13 or i == 24 or i == 25 or i == 26 or i == 30 or i == 31 or i == 32:
             screen.blit(lava, (54 * i + x, height - 135))
@@ -154,119 +84,195 @@ def print_Back(x, height):
             screen.blit(block, (54 * i + x, height - 7 * 54))
         if 0 <= i <= 3:
             screen.blit(block, (54 * i + x, height - 6 * 54))
-        if 0 <= i <= 4:
+        if 0 <= i <= 12:
             screen.blit(block, (54 * i + x, height - 5 * 54))
         if i == 53:
-            screen.blit(flag, (54 * i + x, height - 4 * 54 - 350))
+            screen.blit(flag, (54 * i + x, height - 4 * 54 - 350 - 54))
         if i == 55:
-            screen.blit(castle, (54 * i + x, height - 4 * 54 - 376))
-
-def checkPlatforms(mario,x, jumping):
-    if not jumping:
-        if (54* 13 + x) <= mario.x <= (54*15 + x):
-            mario.y += 30
-        elif (54* 24 + x) <= mario.x <= (54*27 + x):
-            mario.y += 30
-        elif (54* 30 + x) <= mario.x <= (54*33 + x):
-            mario.y += 30
-        elif mario.x > 54 * 5 + x:
-            mario.y = 700 - 54 * 4 - 65
+            screen.blit(castle, (54 * i + x, height - 4 * 54 - 376 - 54))
 
 
-marioImg = "Images/mario.png"
-mario = User(x, y, marioImg)
-goomba1 = User(54 * 32, 700 - 54 * 4 - 34, goombaImg)
-goomba2 = User(54 * 68, 700 - 54 * 4 - 34, goombaImg)
+def game_Over():
+    bg = pygame.image.load("Images/Background2.jpg").convert()
+
+    screen.blit(bg, (0, 0))
+
+    font = pygame.font.Font('font.ttf', 26)
+    text7 = font.render('GAME OVER', False, (255, 255, 255))
+
+    screen.blit(text7, (400, 345))
+
+    pygame.display.flip()
+
+def check_Platforms(mario, x):
+    if not mario.jump:
+        if (54* 13 + x) <= mario.playerPosX <= (54*14 + x):
+            mario.originalplayerPosY = 1000# 700 - 54 * 4 - 65
+            mario.lose = True
+            pass
+        elif (54* 35 + x) <= mario.playerPosX <= (54*36 + x):
+            mario.originalplayerPosY = 1000# 700 - 54 * 4 - 65
+            mario.lose = True
+        elif (54* 37 + x + 45) <= mario.playerPosX <= (54*39 + x):
+            mario.originalplayerPosY = 1000# s700 - 54 * 4 - 65
+            mario.lose = True
+    else:
+        mario.originalplayerPos = 700 - 54 * 5 - 65
+    if mario.playerPosX >= 54 * 4 + x:
+        mario.originalplayerPos = 700 - 54 * 5 - 65
+    elif (0 + x) <= mario.playerPosX <= (54 * 2 + x):
+        mario.originalplayerPosY = 700 - 54 * 7 - 65
+    elif (54 * 2 + x) <= mario.playerPosX <= (54 * 3 + x):
+        mario.originalplayerPosY = 700 - 54 * 6 - 65
+    elif (54 * 3 + x) <= mario.playerPosX <= (54 * 4 + x):
+        mario.originalplayerPosY = 700 - 54 * 5 - 65
 
 
-while not crashed:
-    pygame.time.delay(10)
+class player:
+    def __init__(self, height, width):
+        self.stageWidth = width * 9 - 500
+        self.stagePosX = 0
+
+        self.startScrollingPosX = width / 2
+
+        self.circleRadius = 100
+        self.circlePosX = self.circleRadius
+
+        self.playerPosX = self.circleRadius
+        self.originalplayerPosY = height - (8 * 54) - 8
+        self.newplayerPosY = self.originalplayerPosY
+        self.playerVelocityX = 0
+        self.tracker = 0
+        self.jump = False
+        self.fall = False
+        self.lose = False
+
+
+####################
+#   LEVEL LOOP     #
+####################
+FPS = 60
+
+pygame.init()
+
+pygame.display.set_caption("Super Python Bros.")
+
+jump_noise = pygame.mixer.Sound('Sound Effects/smb_jump-small.wav')
+
+width, height = 1026, 700
+
+screen = pygame.display.set_mode((width, height))
+
+bg = pygame.image.load("Images/Background.jpg").convert()
+
+mario = player(height, width)
+
+while True:
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            crashed = True
+        if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
+            pygame.quit()
 
-        usrKey = pygame.key.get_pressed()
+    k = pygame.key.get_pressed()
 
-        if event.type == pygame.KEYDOWN:
-            if usrKey[pygame.K_s]:
-                if usrKey[pygame.K_k] and usrKey[pygame.K_s]:
-                    if mario.x < width / 2 - speed - marWidth:
-                            mario.x += speed * 2
-                    else:
-                        rightfast = True
-                elif mario.x < width / 2 - speed - marWidth:
-                        mario.x += speed
+    check_Platforms(mario, mario.stagePosX)
 
+    if mario.jump or mario.fall:
+        if mario.tracker < 4 and mario.jump:
+            mario.newplayerPosY -= 60
+
+        else:
+            if mario.newplayerPosY < mario.originalplayerPosY:
+                if mario.newplayerPosY + 60 < mario.originalplayerPosY:
+                    mario.newplayerPosY += 60
                 else:
-                        rightmove = True
-            elif usrKey[pygame.K_a] and x > speed:
-                mario.x -= speed
-                if usrKey[pygame.K_k] and usrKey[pygame.K_a]:
-                    mario.x -= speed
-            if not jumping:
-                if (usrKey[pygame.K_l] and usrKey[pygame.K_a]) or (usrKey[pygame.K_l] and usrKey[pygame.K_s]) or usrKey[pygame.K_l]:
-                    jumping = True
-                    jumpCount = 8
-                    pygame.mixer.music.pause()
-                    jump_noise.play()
-                    pygame.mixer.music.unpause()
+                    mario.newplayerPosY = mario.originalplayerPosY
+
             else:
-                if jumpCount >= 0:
-                    mario.y -= jumpCount ** 2
-                    jumpCount-= 1
-                elif jumpCount >= -8:
-                    mario.y += jumpCount ** 2
-                    jumpCount -= 1
-                elif jumpCount == -9:
-                    jumping = False
-            if falling:
-                if fallCount >= -8:
-                    mario.y += fallCount ** 2
-                    fallCount -= 1
-                elif fallCount == -9:
-                    falling = False
-                    onSurface = False
-                    mario.y = height - 2 * 54 - 65
+                mario.newplayerPosY = mario.originalplayerPosY
+                mario.tracker = 0
+                mario.jump = False
+                mario.fall = False
+                continue
 
-        if rightmove:
-            backSpot -= speed
-        if rightfast:
-            backSpot -= speed * 2
+        mario.tracker += 1
 
-        if loopCount % 5 == 0 or loopCount % 11 == 0:
-            direction *= -1
+    elif k[K_l] and not mario.jump:
+        pygame.mixer.music.pause()
+        jump_noise.play()
+        pygame.mixer.music.unpause()
+        mario.jump = True
+        continue
 
-        print_Back(backSpot, height)
-        goomba1.update(54 * 32 + backSpot, 700 - 54 * 4 - 34)
-        goomba1.selfMove(direction, backSpot)
-        goomba2.update(54 * 68 + backSpot, 700 - 54 * 4 - 34)
-        goomba2.selfMove(direction * 2, backSpot)
+    if k[K_s]:
+        check_Platforms(mario, mario.stagePosX)
+        if mario.originalplayerPosY > mario.newplayerPosY:
+            mario.fall = True
+        mario.playerVelocityX = 30
 
-        checkPlatforms(mario, backSpot, jumping)
-        if (mario.x == 180 or mario.x == 240 or mario.x == 300) and usrKey[pygame.K_s] and backSpot == 0:
-            mario.y += 54
-        elif (mario.x == 180 or mario.x == 240 or mario.x == 300) and (usrKey[pygame.K_s] and usrKey[pygame.K_k]) and backSpot == 0:
-            mario.y += 54
+    elif k[K_a]:
+        check_Platforms(mario, mario.stagePosX)
+        if mario.originalplayerPosY > mario.newplayerPosY:
+            mario.fall = True
+        mario.playerVelocityX = -30
 
-        for goomba in (goomba1, goomba2):
-            if goomba.x <= mario.x <= goomba.x + 30 and mario.y == 700 - 54 * 2 - 65:
-                crashed = True
+    else:
+        mario.playerVelocityX = 0
 
-        mario.printUser(screen)
-        goomba1.printUser(screen)
-        goomba2.printUser(screen)
-        rightmove = False
-        rightfast = False
-
-        loopCount += 1
+    if k[K_k]:
+        mario.playerVelocityX *= 2
 
 
+    mario.playerPosX += mario.playerVelocityX
+
+    if mario.playerPosX > mario.stageWidth - mario.circleRadius:
+        mario.playerPosX = mario.stageWidth - mario.circleRadius
+    elif mario.playerPosX < mario.circleRadius:
+        mario.playerPosX = mario.circleRadius
+    elif mario.playerPosX < mario.startScrollingPosX:
+        mario.circlePosX = mario.playerPosX
+    elif mario.playerPosX > mario.stageWidth - mario.startScrollingPosX:
+        mario.circlePosX = mario.playerPosX - mario.stageWidth + width
+    else:
+        mario.circlePosX = mario.startScrollingPosX
+        mario.stagePosX += -mario.playerVelocityX
+
+    rel_x = mario.stagePosX % width
+    screen.blit(bg, (rel_x - width, 0))
+    if rel_x < width:
+        screen.blit(bg, (rel_x, 0))
+
+    if mario.playerPosX == width:
+        drawBricks()
+
+    print_Back(mario.stagePosX, height)
+    screen.blit(avatar, (mario.circlePosX, mario.newplayerPosY))
 
     pygame.display.update()
-    clock.tick(60)
+    clock.tick(FPS)
+
+    if mario.lose:
+        pygame.mixer.music.pause()
+        if 'gameOver' in sys.modules:
+         importlib.reload(sys.modules['gameOver'])
+
+        else:
+            __import__('gameOver')
+            pass
+        pygame.mixer.music.unpause()
+        break
+
+    elif mario.circlePosX >= 54 * 152.5 + mario.stagePosX:
+        pygame.mixer.music.pause()
+        if 'winScreen' in sys.modules:
+            importlib.reload(sys.modules['winScreen'])
+
+        else:
+            __import__('winScreen')
+        pygame.mixer.music.unpause()
+        break
 
 
-pygame.quit()
-quit()
+
+
 
 
